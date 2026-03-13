@@ -1,0 +1,107 @@
+.App {
+  min-height: 100vh;
+  background: #0b1220;
+  color: #e6edf3;
+  display: flex;
+  justify-content: center;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #0b1220;
+  color: #e6edf3;
+}
+
+.page {
+  width: min(980px, 92vw);
+  padding: 28px 0 56px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 14px;
+}
+
+.col-6 {
+  grid-column: span 6;
+}
+
+.col-12 {
+  grid-column: span 12;
+}
+
+.muted {
+  color: rgba(230, 237, 243, 0.75);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(180deg, #2f81f7 0%, #1f6feb 100%);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:hover:enabled {
+  filter: brightness(1.05);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dot {
+  border-radius: 999px;
+  background: rgba(230, 237, 243, 0.22);
+}
+
+.spinner {
+  border-radius: 999px;
+  border: 2px solid rgba(230, 237, 243, 0.18);
+  border-top-color: rgba(230, 237, 243, 0.90);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+textarea:focus-visible,
+button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.35);
+}
