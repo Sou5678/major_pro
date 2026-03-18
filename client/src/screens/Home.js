@@ -112,14 +112,12 @@ export default function Home() {
 
   return (
     <div className="page">
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
-        <div>
-          <div style={{ fontSize: 30, fontWeight: 900, letterSpacing: -0.4 }}>Resume Analyzer</div>
-          <div className="muted" style={{ marginTop: 6 }}>
-            Upload a PDF/DOCX resume and get structured extraction + suggestions.
-          </div>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontSize: 24, fontWeight: 900, marginBottom: 8 }}>Upload Resume for Analysis</div>
+        <div className="muted">
+          Upload a PDF/DOCX resume and get structured extraction + AI-powered suggestions.
         </div>
-        <div className="muted" style={{ fontSize: 13 }}>{groqStatus}</div>
+        <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{groqStatus}</div>
       </div>
 
       <Form method="post" encType="multipart/form-data">

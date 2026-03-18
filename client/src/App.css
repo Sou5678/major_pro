@@ -3,7 +3,7 @@
   background: #0b1220;
   color: #e6edf3;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
 }
 
 * {
@@ -18,6 +18,7 @@ body {
 .page {
   width: min(980px, 92vw);
   padding: 28px 0 56px;
+  margin: 0 auto;
 }
 
 .card {
@@ -104,4 +105,43 @@ button:focus {
 textarea:focus-visible,
 button:focus-visible {
   box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.35);
+}
+/* Form styles */
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: rgba(47, 129, 247, 0.5);
+  box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.15);
+}
+
+label {
+  color: #e6edf3;
+}
+
+/* Auth page specific styles */
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+}
+
+/* Success message */
+.success-message {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Error message */
+.error-message {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
 }
