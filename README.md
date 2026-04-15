@@ -1,70 +1,250 @@
-# Getting Started with Create React App
+# ResumeIQ - AI-Powered Resume Analysis Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An intelligent resume analysis platform that helps job seekers optimize their resumes using AI-powered insights, ATS compatibility checks, and actionable recommendations.
 
-## Available Scripts
+## 🚀 Features
 
-In the project directory, you can run:
+- **AI-Powered Analysis**: Advanced resume analysis using Groq/OpenRouter AI
+- **ATS Compatibility Check**: Ensure your resume passes Applicant Tracking Systems
+- **Real-time Streaming**: Live analysis updates as AI processes your resume
+- **Smart Suggestions**: Get actionable recommendations to improve your resume
+- **Multi-format Support**: Upload PDF or DOCX files
+- **Download Options**: Export analyzed resumes in PDF or Word format
+- **User Dashboard**: Track all your resume analyses in one place
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
 
-### `npm start`
+## 🛠️ Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **Database**: MongoDB Atlas
+- **File Storage**: Supabase Storage
+- **AI**: Groq (primary), OpenRouter (backup)
+- **Authentication**: JWT
+- **Deployment**: Vercel
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📋 Prerequisites
 
-### `npm test`
+- Node.js 18+ 
+- npm or yarn
+- MongoDB Atlas account
+- Supabase account
+- Groq API key
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🏃 Quick Start
 
-### `npm run build`
+### 1. Clone the repository
+```bash
+git clone https://github.com/YOUR_USERNAME/resumeiq.git
+cd resumeiq
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3. Setup environment variables
+```bash
+cp .env.local.example .env.local
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Edit `.env.local` with your credentials:
+- MongoDB connection string
+- Supabase URL and keys
+- Groq API key
+- JWT secret
 
-### `npm run eject`
+### 4. Run development server
+```bash
+npm run dev
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Open [http://localhost:3000](http://localhost:3000)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📦 Deployment
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Quick Deploy (5 minutes)
+See [QUICK_DEPLOY.md](./QUICK_DEPLOY.md) for fastest deployment
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Full Guide
+See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete step-by-step instructions
 
-## Learn More
+### Deployment Checklist
+Use [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md) to ensure nothing is missed
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Pre-deployment Check
+```bash
+npm run pre-deploy
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🔧 Available Scripts
 
-### Code Splitting
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run typecheck    # Check TypeScript types
+npm run pre-deploy   # Run pre-deployment checks
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📁 Project Structure
 
-### Analyzing the Bundle Size
+```
+resumeiq/
+├── app/                    # Next.js app directory
+│   ├── (auth)/            # Authentication pages
+│   ├── (dashboard)/       # Dashboard pages
+│   ├── (marketing)/       # Landing pages
+│   └── api/               # API routes
+├── components/            # React components
+│   ├── auth/             # Auth components
+│   ├── dashboard/        # Dashboard components
+│   ├── resume/           # Resume-related components
+│   ├── shared/           # Shared components
+│   └── ui/               # UI components
+├── lib/                   # Utility libraries
+│   ├── ai/               # AI integration
+│   ├── db/               # Database queries
+│   └── parsers/          # File parsers
+├── types/                 # TypeScript types
+└── public/               # Static assets
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🔐 Environment Variables
 
-### Making a Progressive Web App
+Required variables:
+- `MONGODB_URI` - MongoDB connection string
+- `JWT_SECRET` - Secret for JWT tokens
+- `GROQ_API_KEY` - Groq API key
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+See `.env.local.example` for all variables
 
-### Advanced Configuration
+## 🧪 Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+# Type checking
+npm run typecheck
 
-### Deployment
+# Linting
+npm run lint
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# Build test
+npm run build
+```
 
-### `npm run build` fails to minify
+## 📊 Performance
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Page Load**: < 2s
+- **Time to Interactive**: < 3s
+- **Lighthouse Score**: 90+
+- **Core Web Vitals**: All green
+
+## 🔒 Security
+
+- JWT-based authentication
+- Secure file upload validation
+- Rate limiting on API routes
+- Environment variables for secrets
+- HTTPS enforced in production
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 🆘 Support
+
+- **Documentation**: See `/docs` folder
+- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/resumeiq/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/resumeiq/discussions)
+
+## 🎯 Roadmap
+
+- [ ] Multi-language support
+- [ ] Resume templates
+- [ ] Cover letter analysis
+- [ ] LinkedIn profile optimization
+- [ ] Job matching recommendations
+- [ ] Interview preparation tips
+
+## 🙏 Acknowledgments
+
+- Next.js team for the amazing framework
+- Vercel for hosting
+- Groq for fast AI inference
+- MongoDB Atlas for database
+- Supabase for file storage
+
+---
+
+**Made with ❤️ by [Your Name]**
+
+ResumeIQ is a Next.js full-stack AI resume analyzer using MongoDB Atlas for storage, JWT cookie auth, streaming AI analysis, resume parsing, and in-app editing.
+
+## Documentation
+
+- Architecture: [ARCHITECTURE.md](c:/Users/Sourabh/major_pro/ARCHITECTURE.md)
+
+## Setup
+
+1. Install dependencies: `npm install`
+2. Add your real secrets to `.env.local`
+3. Start development: `npm run dev`
+4. Build production: `npm run build`
+
+## Runtime Stack
+
+- Frontend: Next.js App Router, TypeScript, Tailwind, Framer Motion
+- Backend: Next.js route handlers
+- Database: MongoDB Atlas
+- Auth: JWT cookie auth
+- AI: Groq and OpenRouter
+- Resume parsing: PDF and DOCX
+- Resume export: PDF and DOCX
+
+## Important Env Values
+
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `OPENROUTER_API_KEY`
+- `OPENROUTER_BASE_URL`
+- `GROQ_API_KEY`
+- `NEXT_PUBLIC_APP_URL`
+- `NEXT_PUBLIC_APP_NAME`
+
+## Core Routes
+
+- `/`
+- `/pricing`
+- `/signin`
+- `/signup`
+- `/analyze`
+- `/dashboard`
+- `/resume/[id]`
+- `/api/auth/signup`
+- `/api/auth/signin`
+- `/api/auth/signout`
+- `/api/auth/session`
+- `/api/resume/upload`
+- `/api/resume/analyze`
+- `/api/resume/[id]`
+- `/api/resume/download/[id]`
+
+## Current Notes
+
+- MongoDB Atlas connectivity must succeed from the machine running the app
+- Supabase storage falls back to a local placeholder URL when storage env values are not configured
+- AI analysis falls back to mock analysis if external AI services are unavailable

@@ -3,12 +3,9 @@
 # env files
 .env
 .env.*
-server/.env
 
 # dependencies
 /node_modules
-/client/node_modules
-/server/node_modules
 /.pnp
 .pnp.js
 
@@ -17,7 +14,8 @@ server/.env
 
 # production
 /build
-/client/build
+/.next
+tsconfig.tsbuildinfo
 
 # misc
 .DS_Store
