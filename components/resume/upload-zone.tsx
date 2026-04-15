@@ -46,8 +46,8 @@ export function UploadZone({ onUploaded }: UploadZoneProps) {
 
   const validateFile = (nextFile: File) => {
     const extension = nextFile.name.split(".").pop()?.toLowerCase();
-    if (!extension || !["pdf", "docx"].includes(extension)) {
-      toast.error("Only PDF and DOCX files are supported");
+    if (!extension || !["pdf", "docx", "tex"].includes(extension)) {
+      toast.error("Only PDF, DOCX, and TEX files are supported");
       return false;
     }
 
@@ -179,7 +179,7 @@ export function UploadZone({ onUploaded }: UploadZoneProps) {
           id={inputId}
           ref={inputRef}
           type="file"
-          accept=".pdf,.docx"
+          accept=".pdf,.docx,.tex"
           className="hidden"
           onChange={(event) => {
             const nextFile = event.target.files?.[0];
@@ -195,7 +195,7 @@ export function UploadZone({ onUploaded }: UploadZoneProps) {
           {dragging ? "Drop it!" : "Drop your resume here"}
         </h3>
         <p className="mt-2 sm:mt-3 text-sm sm:text-base text-text-secondary">or click anywhere here to browse</p>
-        <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-text-tertiary">PDF, DOCX - Max 10MB</p>
+        <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-text-tertiary">PDF, DOCX, TEX - Max 10MB</p>
         <div className="mt-4 sm:mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs text-text-secondary">
           <span className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/10 bg-white/[0.03] px-2.5 sm:px-3 py-1.5 sm:py-2">
             <Zap className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-indigo-200" />

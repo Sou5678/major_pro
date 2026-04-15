@@ -3,14 +3,16 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
-import { BarChart3, FileUp, Home, LogOut, UserCircle2 } from "lucide-react";
+import { BarChart3, FileUp, Home, LogOut, UserCircle2, FilePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useState } from "react";
 
 import { useAuth } from "@/components/shared/auth-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { CreateResumeDialog } from "@/components/resume/create-resume-dialog";
 import { cn } from "@/lib/utils";
 
 const navItems: Array<{ href: Route; label: string; icon: typeof Home }> = [
@@ -24,6 +26,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, setUser } = useAuth();
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const freeLimit = Number(process.env.NEXT_PUBLIC_FREE_PLAN_ANALYSIS_LIMIT ?? 3);
   const used = user?.analysisCount ?? 0;
   const usage = Math.min((used / freeLimit) * 100, 100);
@@ -79,10 +82,22 @@ export function Sidebar() {
         </Button>
       </div>
 
-      {/* New Analysis Button - Compact */}
-      <Button asChild size="sm" className="mt-3 sm:mt-4 w-full h-9">
-        <Link href="/analyze">New Analysis</Link>
-      </Button>
+      {/* Action Buttons - Compact */}
+      <div className="mt-3 sm:mt-4 space-y-2">
+        <Button 
+          size="sm" 
+          className="w-full h-9"
+          onClick={() => setCreateDialogOpen(true)}
+        >
+          <FilePlus className="h-4 w-4 mr-2" />
+          Create Resume
+        </Button>
+        <Button asChild size="sm" variant="secondary" className="w-full h-9">
+          <Link href="/analyze">New Analysis</Link>
+        </Button>
+      </div>
+
+      <CreateResumeDialog open={createDialogOpen} onOpenChange={setCreateDialogOpen} />
 
       {/* User Profile - Compact and fixed at bottom */}
       <div className="mt-auto pt-3 sm:pt-4 rounded-xl border border-border bg-black/20 p-2.5 sm:p-3">

@@ -32,3 +32,39 @@ export function DialogContent({
     </DialogPrimitive.Portal>
   );
 }
+
+export function DialogHeader({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn("mb-6 space-y-2", className)}
+      {...props}
+    />
+  );
+}
+
+export function DialogTitle({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>) {
+  return (
+    <DialogPrimitive.Title
+      className={cn("font-display text-xl font-bold text-text-primary", className)}
+      {...props}
+    />
+  );
+}
+
+export function DialogDescription({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>) {
+  return (
+    <DialogPrimitive.Description
+      className={cn("text-sm text-text-secondary", className)}
+      {...props}
+    />
+  );
+}
