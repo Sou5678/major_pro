@@ -15,13 +15,13 @@ import type { ResumeAnalysis } from "@/types";
 
 // Aggressive caching for better performance
 export const revalidate = 60; // Cache for 60 seconds
-export const dynamic = "force-static"; // Generate static when possible
-export const fetchCache = "force-cache";
+export const dynamic = "force-dynamic"; // Always run on server (not at build time)
+export const fetchCache = "default-cache";
 
 // Separate component for stats to enable parallel loading
 async function DashboardStats({ userId, plan, analysisCount }: { userId: string; plan: string; analysisCount: number }) {
   const { averageScore } = await getUserResumeHistoryPaginated(userId, 1);
-  const planLimit = getPlanAnalysisLimit(plan ?? "FREE");
+  const planLimit = getPlanAnalysisLimit((plan ?? "FREE") as "FREE" | "PRO" | "ENTERPRISE");
   const remaining = Number.isFinite(planLimit)
     ? Math.max(planLimit - analysisCount, 0)
     : "Unlimited";

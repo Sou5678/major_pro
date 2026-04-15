@@ -73,14 +73,20 @@ export const getServerSessionUser = cache(async (): Promise<SessionUser | null> 
 
 export async function requireApiUser(request: NextRequest) {
   const token = request.cookies.get(AUTH_COOKIE)?.value;
+  
+  console.log('[Auth] requireApiUser - Cookie present:', !!token);
+  
   if (!token) {
     return null;
   }
 
   try {
     const payload = verifyAuthToken(token);
-    return findUserById(payload.sub);
-  } catch {
+    const user = await findUserById(payload.sub);
+    console.log('[Auth] requireApiUser - User found:', !!user);
+    return user;
+  } catch (error) {
+    console.error('[Auth] requireApiUser - Error:', error);
     return null;
   }
 }
@@ -106,13 +112,19 @@ export async function getRequestActor(request: NextRequest) {
 }
 
 export function setAuthCookie(response: NextResponse, token: string) {
+  // Set the auth cookie with proper flags
   response.cookies.set(AUTH_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: false,  // Allow in development (http://localhost)
     path: "/",
     maxAge: SEVEN_DAYS,
   });
+  
+  // Set CORS headers to ensure cookie is properly set
+  response.headers.set('Access-Control-Allow-Credentials', 'true');
+  
+  console.log('[Auth] Cookie set:', AUTH_COOKIE, 'Token length:', token.length);
 }
 
 export function clearAuthCookie(response: NextResponse) {

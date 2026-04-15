@@ -1,22 +1,12 @@
 import { notFound, redirect } from "next/navigation";
-import dynamic from "next/dynamic";
 
 import { AnalysisResults } from "@/components/resume/analysis-results";
 import { DownloadButton } from "@/components/resume/download-button";
 import { ResumePreview } from "@/components/resume/resume-preview";
+import { ResumeEditorWrapper } from "@/components/resume/resume-editor-wrapper";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 import { getServerSessionUser } from "@/lib/auth";
 import { getResumeById } from "@/lib/db/queries";
-import { Skeleton } from "@/components/ui/skeleton";
-
-// Lazy-load TipTap editor — ~500KB, only needed on this page
-const ResumeEditor = dynamic(
-  () => import("@/components/resume/resume-editor").then((m) => ({ default: m.ResumeEditor })),
-  {
-    loading: () => <Skeleton className="h-96 w-full rounded-2xl" />,
-    ssr: false,
-  },
-);
 
 export default async function ResumeDetailPage({
   params,
@@ -59,7 +49,7 @@ export default async function ResumeDetailPage({
 
       <div className="grid gap-6 xl:grid-cols-2">
         <ErrorBoundary>
-          <ResumeEditor resumeId={resume.id} initialContent={editedContent} />
+          <ResumeEditorWrapper resumeId={resume.id} initialContent={editedContent} />
         </ErrorBoundary>
         <ResumePreview text={resume.parsedText} />
       </div>

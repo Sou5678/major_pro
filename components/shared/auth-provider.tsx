@@ -54,6 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<"loading" | "authenticated" | "unauthenticated">("loading");
 
   const applyUser = useCallback((nextUser: SessionUser | null) => {
+    console.log('[AuthProvider] Applying user:', nextUser ? 'authenticated' : 'unauthenticated');
     setUserState(nextUser);
     setStatus(nextUser ? "authenticated" : "unauthenticated");
     writeCache(nextUser);
@@ -61,12 +62,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshSession = useCallback(async () => {
     try {
+      console.log('[AuthProvider] Fetching session...');
       const response = await fetch("/api/auth/session", {
         credentials: "include",
         cache: "no-store",
       });
 
+      console.log('[AuthProvider] Session response status:', response.status);
+
       if (!response.ok) {
+        console.log('[AuthProvider] Session fetch failed');
         applyUser(null);
         return;
       }
@@ -76,16 +81,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         data?: { user: SessionUser | null };
       };
 
+      console.log('[AuthProvider] Session data:', payload.data?.user ? 'user found' : 'no user');
       applyUser(payload.data?.user ?? null);
-    } catch {
+    } catch (error) {
+      console.error('[AuthProvider] Session fetch error:', error);
       applyUser(null);
     }
   }, [applyUser]);
 
   useEffect(() => {
+    console.log('[AuthProvider] Initializing...');
+    
     // 1. Try sessionStorage cache first — instant, no network
     const cached = readCache();
     if (cached) {
+      console.log('[AuthProvider] Using cached session:', cached.email);
       setUserState(cached);
       setStatus("authenticated");
       // Silently revalidate in background after 100ms so UI is never blocked
@@ -94,6 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // 2. No cache — fetch from server
+    console.log('[AuthProvider] No cache, fetching from server...');
     void refreshSession();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

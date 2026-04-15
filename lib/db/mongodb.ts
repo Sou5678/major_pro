@@ -16,8 +16,8 @@ function createClient() {
     maxPoolSize: 10,
     minPoolSize: 2,
     maxIdleTimeMS: 30_000,
-    serverSelectionTimeoutMS: 10_000, // Increased from 5s to 10s
-    connectTimeoutMS: 10_000,
+    serverSelectionTimeoutMS: 5_000,  // Reduced from 10s to 5s
+    connectTimeoutMS: 5_000,           // Reduced from 10s to 5s
     socketTimeoutMS: 45_000,
     serverApi: {
       version: ServerApiVersion.v1,
@@ -27,16 +27,40 @@ function createClient() {
   });
 }
 
+let isConnecting = false;
+let connectionPromise: Promise<void> | null = null;
+
 export async function getDatabase() {
-  // Always cache the client globally — in both dev and prod
+  // During build time, skip database connection
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    throw new Error('Database not available during build');
+  }
+  
   if (!globalForMongo.mongoClient) {
     const client = createClient();
     if (!client) {
       throw new Error("MONGODB_URI is not configured.");
     }
-    globalForMongo.mongoClient = client;
+    
+    // Connect once during initialization
+    if (!isConnecting && !connectionPromise) {
+      isConnecting = true;
+      connectionPromise = client.connect()
+        .then(() => {
+          globalForMongo.mongoClient = client;
+          isConnecting = false;
+          console.log('[MongoDB] Connected successfully');
+        })
+        .catch((error) => {
+          isConnecting = false;
+          connectionPromise = null;
+          console.error('[MongoDB] Connection failed:', error.message);
+          throw error;
+        });
+    }
+    
+    await connectionPromise;
   }
 
-  await globalForMongo.mongoClient.connect();
-  return globalForMongo.mongoClient.db(dbName);
+  return globalForMongo.mongoClient!.db(dbName);
 }

@@ -11,13 +11,13 @@ import { getPlanAnalysisLimit } from "@/lib/db/queries";
 
 // Aggressive caching for instant loads
 export const revalidate = 120; // Cache for 2 minutes
-export const dynamic = "force-static";
-export const fetchCache = "force-cache";
+export const dynamic = "force-dynamic"; // Always run on server (not at build time)
+export const fetchCache = "default-cache";
 
 // Separate component for usage data
-async function UsageSnapshot({ userId, plan, analysisCount }: { userId: string; plan: string; analysisCount: number }) {
+async function UsageSnapshot({ plan, analysisCount }: { plan: string; analysisCount: number }) {
   const freeLimit = Number(process.env.NEXT_PUBLIC_FREE_PLAN_ANALYSIS_LIMIT ?? 3);
-  const planLimit = getPlanAnalysisLimit(plan);
+  const planLimit = getPlanAnalysisLimit(plan as "FREE" | "PRO" | "ENTERPRISE");
   const used = analysisCount ?? 0;
   const usagePercent = Number.isFinite(planLimit)
     ? Math.min((used / Math.max(planLimit, 1)) * 100, 100)
@@ -129,7 +129,7 @@ export default async function ProfilePage() {
             </CardContent>
           </Card>
         }>
-          <UsageSnapshot userId={user.id} plan={user.plan ?? "FREE"} analysisCount={user.analysisCount} />
+          <UsageSnapshot plan={user.plan ?? "FREE"} analysisCount={user.analysisCount} />
         </Suspense>
       </div>
     </div>

@@ -41,17 +41,24 @@ export function SignInForm() {
           | "/pricing"
           | "/signin"
           | "/signup";
+        
+        console.log("Signing in...");
         const response = await fetch("/api/auth/signin", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include", // Ensure cookies are sent/received
           body: JSON.stringify({
             email: values.email,
             password: values.password,
             rememberMe: values.rememberMe,
           }),
         });
+        
+        console.log("Response status:", response.status);
+        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+        
         const result = (await response.json()) as {
           success: boolean;
           data?: {
@@ -67,19 +74,36 @@ export function SignInForm() {
           error?: { message: string };
         };
 
+        console.log("Result:", result);
+
         if (!response.ok || !result.success) {
           toast.error(result.error?.message ?? "Unable to sign in.");
           return;
         }
 
         if (result.data?.user) {
+          console.log("Setting user:", result.data.user);
+          // Update the auth context immediately
           setUser(result.data.user);
+          
+          toast.success("Welcome back.");
+          
+          // Wait for cookie to be set by browser before redirecting
+          // This ensures the cookie is available on the next page load
+          console.log("Navigating to:", callbackUrl);
+          
+          // Refresh router cache to clear any stale data
+          router.refresh();
+          
+          // Small delay to ensure cookie is set and router is refreshed
+          setTimeout(() => {
+            window.location.href = callbackUrl;
+          }, 200);
+        } else {
+          toast.error("Authentication failed. Please try again.");
         }
-        toast.success("Welcome back.");
-        // Push immediately — no router.refresh() needed because setUser already
-        // hydrates AuthProvider and the session cookie is set by the API response
-        router.push(callbackUrl);
-      } catch {
+      } catch (error) {
+        console.error("Sign in error:", error);
         toast.error("Unable to sign in right now.");
       }
     });

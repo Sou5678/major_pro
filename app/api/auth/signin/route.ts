@@ -50,7 +50,12 @@ export async function POST(request: NextRequest) {
     // Return the full user in the response so the client can hydrate
     // AuthProvider immediately — no extra /api/auth/session round trip needed
     const response = NextResponse.json(apiSuccess({ user: sessionUser }));
+    
+    console.log('[Signin] Setting auth cookie for user:', sessionUser.email);
     setAuthCookie(response, token);
+    
+    console.log('[Signin] Response cookies:', response.cookies.getAll());
+    
     return response;
   } catch (error) {
     return NextResponse.json(

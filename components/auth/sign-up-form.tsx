@@ -64,7 +64,8 @@ export function SignUpForm() {
           setUser(result.data.user);
         }
         toast.success("Welcome to ResumeIQ.");
-        router.push("/dashboard");
+        // Use window.location.href for reliable navigation after auth state change
+        window.location.href = "/dashboard";
       } catch {
         toast.error("Unable to create your account right now.");
       }

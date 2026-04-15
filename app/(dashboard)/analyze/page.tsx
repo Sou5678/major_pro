@@ -11,14 +11,18 @@ import { UploadZone } from "@/components/resume/upload-zone";
 import { StreamingText } from "@/components/shared/streaming-text";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 import { ATSScorePanel } from "@/components/resume/ats-score-panel";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ResumeAnalysis } from "@/types";
 
 // Lazy-load heavy analysis results panel — only needed after analysis completes
 const AnalysisResults = dynamic(
-  () => import("@/components/resume/analysis-results").then((m) => ({ default: m.AnalysisResults })),
-  { loading: () => <Skeleton className="h-96 w-full rounded-3xl" />, ssr: false },
+  () => import("@/components/resume/analysis-results").then((mod) => ({
+    default: mod.AnalysisResults,
+  })),
+  { 
+    loading: () => <Skeleton className="h-96 w-full rounded-3xl" />, 
+    ssr: false 
+  },
 );
 
 export default function AnalyzePage() {
@@ -137,17 +141,9 @@ export default function AnalyzePage() {
     }
   };
 
-  // Auto-analyze when resume is uploaded
-  useEffect(() => {
-    if (resumeId && !isAnalyzing && !analysis) {
-      void runAnalysis();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resumeId]);
-
   return (
     <div className="space-y-6 sm:space-y-8">
-      <div className="flex flex-col gap-3 sm:gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-3 sm:gap-4">
         <div>
           <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-indigo-200">Analyze</p>
           <h1 className="mt-2 sm:mt-3 font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary">Upload, analyze, improve</h1>
@@ -171,8 +167,6 @@ export default function AnalyzePage() {
               setAnalysis(null);
               setStreamChunks([]);
               setAnalysisProgress(0);
-            }}
-          />
             }}
           />
           <ResumePreview text={parsedText} />

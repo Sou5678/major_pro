@@ -171,7 +171,7 @@ export function ATSScorePanel({
 
         <Button
           onClick={onEditResume}
-          variant="outline"
+          variant="secondary"
           className="w-full"
           size="lg"
         >
