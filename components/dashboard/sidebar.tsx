@@ -35,8 +35,12 @@ export function Sidebar() {
     await fetch("/api/auth/signout", { method: "POST" });
     setUser(null);
     toast.success("Signed out.");
-    router.push("/");
-    router.refresh();
+    window.location.href = "/";
+  };
+
+  const handleCreateResume = () => {
+    console.log('[Sidebar] Opening create resume dialog');
+    setCreateDialogOpen(true);
   };
 
   return (
@@ -82,22 +86,24 @@ export function Sidebar() {
         </Button>
       </div>
 
-      {/* Action Buttons - Compact */}
+      {/* Action Buttons - Always visible */}
       <div className="mt-3 sm:mt-4 space-y-2">
-        <Button 
-          size="sm" 
-          className="w-full h-9"
-          onClick={() => setCreateDialogOpen(true)}
+        <button
+          type="button"
+          onClick={handleCreateResume}
+          className="inline-flex items-center justify-center gap-2 w-full h-9 px-3 text-xs sm:text-sm font-medium rounded-lg bg-accent text-white shadow-[0_12px_30px_rgba(99,102,241,0.3)] hover:bg-accent-hover transition-all duration-150 active:scale-[0.98]"
         >
-          <FilePlus className="h-4 w-4 mr-2" />
-          Create Resume
-        </Button>
+          <FilePlus className="h-4 w-4" />
+          <span>Create Resume</span>
+        </button>
         <Button asChild size="sm" variant="secondary" className="w-full h-9">
           <Link href="/analyze">New Analysis</Link>
         </Button>
       </div>
 
-      <CreateResumeDialog open={createDialogOpen} onOpenChange={setCreateDialogOpen} />
+      {createDialogOpen && (
+        <CreateResumeDialog open={createDialogOpen} onOpenChange={setCreateDialogOpen} />
+      )}
 
       {/* User Profile - Compact and fixed at bottom */}
       <div className="mt-auto pt-3 sm:pt-4 rounded-xl border border-border bg-black/20 p-2.5 sm:p-3">

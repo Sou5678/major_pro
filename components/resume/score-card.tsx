@@ -1,11 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { CheckCircle2, Download, FileText, ShieldCheck, TriangleAlert } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatRelativeTime } from "@/lib/utils";
 import type { ResumeAnalysis } from "@/types";
 
@@ -18,40 +17,16 @@ export function ScoreCard({
   analyzedAt: Date | string;
   actions?: React.ReactNode;
 }) {
-  const scoreTone =
-    analysis.overallScore < 50
-      ? "border-danger/30 bg-danger/10"
-      : analysis.overallScore < 70
-        ? "border-warning/30 bg-warning/10"
-        : analysis.overallScore < 90
-          ? "border-success/30 bg-success/10"
-          : "border-accent/30 bg-accent/10";
-
   return (
     <Card>
-      <CardHeader className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className={`flex h-36 w-36 items-center justify-center rounded-full border-[10px] shadow-[0_20px_60px_rgba(0,0,0,0.18)] ${scoreTone}`}
-          >
-            <div className="text-center">
-              <p className="font-display text-5xl font-bold text-text-primary">{analysis.overallScore}</p>
-              <p className="text-sm text-text-secondary">/100</p>
-            </div>
-          </motion.div>
-          <div className="space-y-3">
-            <CardTitle className="text-3xl">Overall Resume Score</CardTitle>
-            <div className="flex flex-wrap gap-3">
-              <Badge variant="accent">ATS {analysis.atsCompatibility.score}/100</Badge>
-              <Badge variant={analysis.atsCompatibility.passesATS ? "success" : "warning"}>
-                {analysis.atsCompatibility.passesATS ? "Passes ATS" : "Needs ATS fixes"}
-              </Badge>
-            </div>
-            <p className="text-sm text-text-secondary">Last analyzed {formatRelativeTime(analyzedAt)}</p>
-          </div>
+      <CardHeader>
+        <div className="flex flex-wrap gap-3">
+          <Badge variant="accent">ATS {analysis.atsCompatibility.score}/100</Badge>
+          <Badge variant={analysis.atsCompatibility.passesATS ? "success" : "warning"}>
+            {analysis.atsCompatibility.passesATS ? "Passes ATS" : "Needs ATS fixes"}
+          </Badge>
         </div>
+        <p className="text-sm text-text-secondary mt-2">Last analyzed {formatRelativeTime(analyzedAt)}</p>
       </CardHeader>
       <CardContent className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="space-y-4">

@@ -48,12 +48,20 @@ export async function POST(request: NextRequest) {
 
     // Handle LaTeX code input
     if (extension === "tex" && latexCode) {
-      parsed = await parseLatexResume(latexCode);
-      finalFileBase64 = Buffer.from(latexCode).toString("base64");
-      
-      if (!parsed.rawText.trim()) {
+      try {
+        parsed = await parseLatexResume(latexCode);
+        finalFileBase64 = Buffer.from(latexCode).toString("base64");
+        
+        if (!parsed.rawText.trim()) {
+          return NextResponse.json(
+            apiError("This LaTeX code appears to be empty", "EMPTY_RESUME_TEXT"),
+            { status: 400 },
+          );
+        }
+      } catch (parseError) {
+        console.error('[Upload] LaTeX parse error:', parseError);
         return NextResponse.json(
-          apiError("This LaTeX code appears to be empty", "EMPTY_RESUME_TEXT"),
+          apiError("Failed to parse LaTeX code. Please check the syntax.", "LATEX_PARSE_ERROR"),
           { status: 400 },
         );
       }
@@ -67,7 +75,17 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(apiError("File must be under 10MB", "FILE_TOO_LARGE"), { status: 400 });
       }
 
-      const buffer = Buffer.from(fileBase64, "base64");
+      let buffer;
+      try {
+        buffer = Buffer.from(fileBase64, "base64");
+      } catch (bufferError) {
+        console.error('[Upload] Base64 decode error:', bufferError);
+        return NextResponse.json(
+          apiError("Invalid file encoding. Please try uploading again.", "INVALID_BASE64"),
+          { status: 400 },
+        );
+      }
+
       if (!buffer.length) {
         return NextResponse.json(apiError("We couldn't read this file. Try a different version.", "INVALID_BASE64"), {
           status: 400,
@@ -78,11 +96,25 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(apiError("File must be under 10MB", "FILE_TOO_LARGE"), { status: 400 });
       }
 
-      if (extension === "tex") {
-        const texContent = buffer.toString("utf-8");
-        parsed = await parseLatexResume(texContent);
-      } else {
-        parsed = extension === "pdf" ? await parsePdfResume(buffer) : await parseDocxResume(buffer);
+      try {
+        if (extension === "tex") {
+          const texContent = buffer.toString("utf-8");
+          parsed = await parseLatexResume(texContent);
+        } else if (extension === "pdf") {
+          parsed = await parsePdfResume(buffer);
+        } else {
+          parsed = await parseDocxResume(buffer);
+        }
+      } catch (parseError) {
+        console.error(`[Upload] ${extension.toUpperCase()} parse error:`, parseError);
+        const errorMessage = parseError instanceof Error ? parseError.message : "Unknown parse error";
+        return NextResponse.json(
+          apiError(
+            `Failed to parse ${extension.toUpperCase()} file: ${errorMessage}`,
+            `${extension.toUpperCase()}_PARSE_ERROR`
+          ),
+          { status: 400 },
+        );
       }
 
       if (!parsed.rawText.trim()) {
@@ -94,19 +126,32 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[Upload] Creating resume record for user:', actor.id);
-    const resume = await createResumeRecord({
-      userId: actor.id,
-      fileName,
-      fileType: extension,
-      fileUrl: `db://${actor.id}/${Date.now()}-${fileName.replace(/\s+/g, "-")}`,
-      fileBase64: finalFileBase64,
-      fileContentType,
-      parsedText: parsed.rawText,
-      parsedSections: parsed.sections,
-      parsedHtml: parsed.html ?? null,
-      jobTitle: jobTitle || null,
-    });
-    console.log('[Upload] Resume created successfully:', resume.id);
+    let resume;
+    try {
+      resume = await createResumeRecord({
+        userId: actor.id,
+        fileName,
+        fileType: extension,
+        fileUrl: `db://${actor.id}/${Date.now()}-${fileName.replace(/\s+/g, "-")}`,
+        fileBase64: finalFileBase64,
+        fileContentType,
+        parsedText: parsed.rawText,
+        parsedSections: parsed.sections,
+        parsedHtml: parsed.html ?? null,
+        jobTitle: jobTitle || null,
+      });
+      console.log('[Upload] Resume created successfully:', resume.id);
+    } catch (dbError) {
+      console.error('[Upload] Database error:', dbError);
+      const errorMessage = dbError instanceof Error ? dbError.message : "Unknown database error";
+      return NextResponse.json(
+        apiError(
+          `Failed to save resume: ${errorMessage}. Using fallback storage.`,
+          "DATABASE_ERROR"
+        ),
+        { status: 500 },
+      );
+    }
 
     const response = NextResponse.json(
       apiSuccess({
@@ -125,12 +170,46 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[Upload] Error occurred:', error);
     console.error('[Upload] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('[Upload] Error name:', error instanceof Error ? error.name : 'Unknown');
+    console.error('[Upload] Error message:', error instanceof Error ? error.message : 'Unknown');
     
-    const message =
-      error instanceof Error && error.message === "EMPTY_RESUME_TEXT"
-        ? "This resume appears to be empty or image-based"
-        : "We couldn't read this file. Try a different version.";
+    // More specific error messages based on error type
+    let message = "We couldn't read this file. Try a different version.";
+    let code = "UPLOAD_FAILED";
+    
+    if (error instanceof Error) {
+      // Parser errors
+      if (error.message.includes("pdf") || error.message.includes("PDF")) {
+        message = "Failed to parse PDF file. The file may be corrupted or password-protected.";
+        code = "PDF_PARSE_ERROR";
+      } else if (error.message.includes("docx") || error.message.includes("DOCX")) {
+        message = "Failed to parse DOCX file. The file may be corrupted.";
+        code = "DOCX_PARSE_ERROR";
+      } else if (error.message.includes("latex") || error.message.includes("tex")) {
+        message = "Failed to parse LaTeX file. Please check the syntax.";
+        code = "LATEX_PARSE_ERROR";
+      }
+      // Database errors
+      else if (error.message.includes("MongoDB") || error.message.includes("database") || error.message.includes("connect")) {
+        message = "Database connection issue. Using fallback storage. Please try again.";
+        code = "DATABASE_ERROR";
+      }
+      // Memory errors
+      else if (error.message.includes("memory") || error.message.includes("heap")) {
+        message = "File is too large to process. Please try a smaller file.";
+        code = "MEMORY_ERROR";
+      }
+      // Empty resume
+      else if (error.message === "EMPTY_RESUME_TEXT") {
+        message = "This resume appears to be empty or image-based";
+        code = "EMPTY_RESUME_TEXT";
+      }
+      // Generic error with message
+      else if (error.message) {
+        message = `Upload failed: ${error.message}`;
+      }
+    }
 
-    return NextResponse.json(apiError(message, "UPLOAD_FAILED"), { status: 500 });
+    return NextResponse.json(apiError(message, code), { status: 500 });
   }
 }

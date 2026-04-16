@@ -74,18 +74,36 @@ async function extractWithPdfJs(buffer: Buffer) {
 }
 
 export async function parsePdfResume(buffer: Buffer): Promise<ParsedResumeDocument> {
-  const [parsed, pdfJsText] = await Promise.all([pdfParse(buffer), extractWithPdfJs(buffer)]);
-  const rawText = [parsed.text, pdfJsText]
-    .filter(Boolean)
-    .join("\n\n")
-    .replace(/\u0000/g, "")
-    .replace(/[^\S\r\n]+/g, " ")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  try {
+    const [parsed, pdfJsText] = await Promise.all([
+      pdfParse(buffer).catch((err) => {
+        console.error('[PDF Parser] pdf-parse error:', err);
+        return { text: "" };
+      }),
+      extractWithPdfJs(buffer).catch((err) => {
+        console.error('[PDF Parser] pdfjs error:', err);
+        return "";
+      }),
+    ]);
+    
+    const rawText = [parsed.text, pdfJsText]
+      .filter(Boolean)
+      .join("\n\n")
+      .replace(/\u0000/g, "")
+      .replace(/[^\S\r\n]+/g, " ")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
 
-  if (!rawText) {
-    throw new Error("EMPTY_RESUME_TEXT");
+    if (!rawText) {
+      throw new Error("EMPTY_RESUME_TEXT");
+    }
+
+    return sectionizeResume(rawText);
+  } catch (error) {
+    console.error('[PDF Parser] Fatal error:', error);
+    if (error instanceof Error && error.message === "EMPTY_RESUME_TEXT") {
+      throw error;
+    }
+    throw new Error(`PDF parsing failed: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
-
-  return sectionizeResume(rawText);
 }
