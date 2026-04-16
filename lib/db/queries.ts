@@ -51,7 +51,8 @@ async function withMongo<T>(operation: (db: Awaited<ReturnType<typeof getDatabas
   try {
     const db = await getDatabase();
     return await operation(db);
-  } catch {
+  } catch (error) {
+    console.error('[MongoDB] Operation failed, falling back to file storage:', error instanceof Error ? error.message : 'Unknown error');
     return null;
   }
 }
@@ -576,24 +577,34 @@ export async function createResumeRecord(data: {
   const document = normalizeResumeDocument(data);
 
   const mongoResult = await withMongo(async (db) => {
-    const mongoDocument = {
-      ...document,
-      _id: new ObjectId(),
-      userId: new ObjectId(data.userId),
-      createdAt: new Date(document.createdAt),
-      updatedAt: new Date(document.updatedAt),
-    };
-    await db.collection("resumes").insertOne(mongoDocument);
-    return mapResume({
-      ...document,
-      _id: mongoDocument._id.toHexString(),
-      userId: mongoDocument.userId.toHexString(),
-    });
+    try {
+      // For guest users (UUID format), use string ID directly
+      const userId = ObjectId.isValid(data.userId) ? new ObjectId(data.userId) : data.userId;
+      
+      const mongoDocument = {
+        ...document,
+        _id: new ObjectId(),
+        userId: userId,
+        createdAt: new Date(document.createdAt),
+        updatedAt: new Date(document.updatedAt),
+      };
+      await db.collection("resumes").insertOne(mongoDocument);
+      console.log('[MongoDB] Resume inserted successfully');
+      return mapResume({
+        ...document,
+        _id: mongoDocument._id.toHexString(),
+        userId: typeof userId === 'string' ? userId : userId.toHexString(),
+      });
+    } catch (error) {
+      console.error('[MongoDB] Insert failed:', error);
+      throw error;
+    }
   });
   if (mongoResult !== null) {
     return mongoResult;
   }
 
+  console.log('[Fallback] Using file storage for resume');
   const fileData = await readFallbackData();
   fileData.resumes.push(document);
   await writeFallbackData(fileData);

@@ -15,6 +15,10 @@ const HowItWorks = dynamic(() =>
   import("@/components/landing/how-it-works").then((m) => ({ default: m.HowItWorks })),
 );
 
+const DemoResumes = dynamic(() =>
+  import("@/components/landing/demo-resumes").then((m) => ({ default: m.DemoResumes })),
+);
+
 const PricingSection = dynamic(() =>
   import("@/components/landing/pricing").then((m) => ({ default: m.PricingSection })),
 );
@@ -44,6 +48,9 @@ export default function MarketingHomePage() {
   return (
     <main>
       <Hero />
+      <Suspense fallback={<SectionSkeleton />}>
+        <DemoResumes />
+      </Suspense>
       <Suspense fallback={<SectionSkeleton />}>
         <Features />
       </Suspense>

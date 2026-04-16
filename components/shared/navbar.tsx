@@ -25,12 +25,6 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-6 lg:gap-8 text-sm text-text-secondary md:flex">
-          <Link href="/" className="transition hover:text-text-primary">
-            Home
-          </Link>
-          <Link href="/pricing" className="transition hover:text-text-primary">
-            Pricing
-          </Link>
           <Link href="/signin" className="transition hover:text-text-primary">
             Sign in
           </Link>
@@ -64,20 +58,6 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-white/5 bg-surface/95 backdrop-blur-xl">
           <nav className="flex flex-col px-4 py-4 space-y-1">
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-xl px-4 py-3 text-sm text-text-secondary transition hover:bg-white/5 hover:text-text-primary"
-            >
-              Home
-            </Link>
-            <Link
-              href="/pricing"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-xl px-4 py-3 text-sm text-text-secondary transition hover:bg-white/5 hover:text-text-primary"
-            >
-              Pricing
-            </Link>
             <Link
               href="/signin"
               onClick={() => setMobileMenuOpen(false)}

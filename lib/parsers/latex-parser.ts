@@ -1,12 +1,7 @@
-import { extractSections } from "./shared";
+import { sectionizeResume } from "./shared";
+import type { ParsedResumeDocument } from "@/types";
 
-interface ParsedResume {
-  rawText: string;
-  sections: Record<string, string>;
-  html?: string;
-}
-
-export async function parseLatexResume(latexCode: string): Promise<ParsedResume> {
+export async function parseLatexResume(latexCode: string): Promise<ParsedResumeDocument> {
   // Remove LaTeX commands and extract text content
   let text = latexCode;
 
@@ -73,10 +68,5 @@ export async function parseLatexResume(latexCode: string): Promise<ParsedResume>
     throw new Error("EMPTY_RESUME_TEXT");
   }
 
-  const sections = extractSections(text);
-
-  return {
-    rawText: text,
-    sections,
-  };
+  return sectionizeResume(text);
 }

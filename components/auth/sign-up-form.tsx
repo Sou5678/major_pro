@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -15,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { signUpSchema } from "@/lib/validations";
 
 export function SignUpForm() {
-  const router = useRouter();
   const { setUser } = useAuth();
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof signUpSchema>>({

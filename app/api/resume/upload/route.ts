@@ -13,8 +13,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const actor = await getRequestActor(request);
   try {
+    const actor = await getRequestActor(request);
+    console.log('[Upload] Actor:', { id: actor.id, authenticated: actor.authenticated });
+    
     const body = (await request.json()) as {
       fileName?: string;
       fileType?: string;
@@ -91,6 +93,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    console.log('[Upload] Creating resume record for user:', actor.id);
     const resume = await createResumeRecord({
       userId: actor.id,
       fileName,
@@ -103,6 +106,7 @@ export async function POST(request: NextRequest) {
       parsedHtml: parsed.html ?? null,
       jobTitle: jobTitle || null,
     });
+    console.log('[Upload] Resume created successfully:', resume.id);
 
     const response = NextResponse.json(
       apiSuccess({
@@ -119,6 +123,9 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
+    console.error('[Upload] Error occurred:', error);
+    console.error('[Upload] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    
     const message =
       error instanceof Error && error.message === "EMPTY_RESUME_TEXT"
         ? "This resume appears to be empty or image-based"
