@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { CreateResumeDialog } from "@/components/resume/create-resume-dialog";
 import { cn } from "@/lib/utils";
+import { BUILD_VERSION } from "@/lib/version";
 
 const navItems: Array<{ href: Route; label: string; icon: typeof Home }> = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -39,7 +40,7 @@ export function Sidebar() {
   };
 
   const handleCreateResume = () => {
-    console.log('[Sidebar] Opening create resume dialog');
+    console.log('[Sidebar] Opening create resume dialog - Build:', BUILD_VERSION);
     setCreateDialogOpen(true);
   };
 
@@ -86,12 +87,35 @@ export function Sidebar() {
         </Button>
       </div>
 
-      {/* Action Buttons - Always visible */}
-      <div className="mt-3 sm:mt-4 space-y-2">
+      {/* Action Buttons - Always visible with forced rendering */}
+      <div className="mt-3 sm:mt-4 space-y-2" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         <button
           type="button"
           onClick={handleCreateResume}
-          className="inline-flex items-center justify-center gap-2 w-full h-9 px-3 text-xs sm:text-sm font-medium rounded-lg bg-accent text-white shadow-[0_12px_30px_rgba(99,102,241,0.3)] hover:bg-accent-hover transition-all duration-150 active:scale-[0.98]"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            width: '100%',
+            height: '2.25rem',
+            padding: '0 0.75rem',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+            borderRadius: '0.5rem',
+            backgroundColor: 'rgb(99, 102, 241)',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 150ms',
+            boxShadow: '0 12px 30px rgba(99, 102, 241, 0.3)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgb(79, 82, 221)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgb(99, 102, 241)';
+          }}
         >
           <FilePlus className="h-4 w-4" />
           <span>Create Resume</span>
@@ -101,9 +125,7 @@ export function Sidebar() {
         </Button>
       </div>
 
-      {createDialogOpen && (
-        <CreateResumeDialog open={createDialogOpen} onOpenChange={setCreateDialogOpen} />
-      )}
+      <CreateResumeDialog open={createDialogOpen} onOpenChange={setCreateDialogOpen} />
 
       {/* User Profile - Compact and fixed at bottom */}
       <div className="mt-auto pt-3 sm:pt-4 rounded-xl border border-border bg-black/20 p-2.5 sm:p-3">

@@ -12,6 +12,19 @@
       "analysisCount": 3,
       "createdAt": "2026-04-16T09:40:17.062Z",
       "updatedAt": "2026-04-16T09:51:55.825Z"
+    },
+    {
+      "_id": "3953ac46-1fc6-409c-91ad-6aec6f631b04",
+      "email": "patel123sourabh45@gmail.com",
+      "name": "Sourabh",
+      "image": null,
+      "password": "",
+      "resetPasswordTokenHash": null,
+      "resetPasswordExpiresAt": null,
+      "plan": "FREE",
+      "analysisCount": 0,
+      "createdAt": "2026-04-16T12:51:36.614Z",
+      "updatedAt": "2026-04-16T12:51:36.614Z"
     }
   ],
   "resumes": [
