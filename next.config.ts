@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   compress: true,
   poweredByHeader: false,
+  // Disable static optimization for dynamic routes
+  output: "standalone",
   experimental: {
     optimizePackageImports: [
       "lucide-react",
@@ -20,6 +22,19 @@ const nextConfig: NextConfig = {
         hostname: "**",
       },
     ],
+  },
+  // Ensure client components are properly bundled
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Ensure client-side modules are included
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
   },
 };
 
