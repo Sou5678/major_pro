@@ -21,7 +21,22 @@ export async function GET(request: NextRequest) {
   const storedState = request.cookies.get("resumeiq_oauth_state")?.value;
   const nextPath = request.cookies.get("resumeiq_auth_redirect")?.value || "/dashboard";
 
+  console.log('[Google OAuth Callback]', {
+    hasCode: !!code,
+    hasState: !!state,
+    hasStoredState: !!storedState,
+    stateMatch: state === storedState,
+    nextPath,
+    appUrl
+  });
+
   if (!code || !state || !storedState || state !== storedState) {
+    console.error('[Google OAuth] State validation failed', {
+      code: !!code,
+      state: !!state,
+      storedState: !!storedState,
+      match: state === storedState
+    });
     return NextResponse.redirect(`${appUrl}/signin?error=google_state`);
   }
 
@@ -40,7 +55,11 @@ export async function GET(request: NextRequest) {
       }),
     });
 
+    console.log('[Google OAuth] Token response status:', tokenResponse.status);
+
     if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text();
+      console.error('[Google OAuth] Token exchange failed:', errorText);
       return NextResponse.redirect(`${appUrl}/signin?error=google_token`);
     }
 
@@ -74,6 +93,12 @@ export async function GET(request: NextRequest) {
       name: profile.name,
       image: profile.picture ?? null,
     });
+    
+    console.log('[Google OAuth] User created/updated:', {
+      email: user.email,
+      id: user.id
+    });
+    
     const token = createAuthToken(user);
     const handoffUrl = new URL("/auth/callback", appUrl);
     handoffUrl.searchParams.set("next", nextPath);
@@ -81,8 +106,12 @@ export async function GET(request: NextRequest) {
     response.cookies.delete("resumeiq_oauth_state");
     response.cookies.delete("resumeiq_auth_redirect");
     setAuthCookie(response, token);
+    
+    console.log('[Google OAuth] Success! Redirecting to:', handoffUrl.toString());
+    
     return response;
-  } catch {
+  } catch (error) {
+    console.error('[Google OAuth] Error:', error);
     return NextResponse.redirect(`${appUrl}/signin?error=google_failed`);
   }
 }

@@ -1,0 +1,90 @@
+╔══════════════════════════════════════════════════════════════╗
+║           GOOGLE SIGN-IN FIX - QUICK STEPS                   ║
+╚══════════════════════════════════════════════════════════════╝
+
+✅ Your credentials are configured correctly!
+❌ The redirect URI is likely missing in Google Console
+
+┌──────────────────────────────────────────────────────────────┐
+│ STEP 1: Open Google Cloud Console                           │
+└──────────────────────────────────────────────────────────────┘
+
+https://console.cloud.google.com/apis/credentials
+
+┌──────────────────────────────────────────────────────────────┐
+│ STEP 2: Find Your OAuth Client                              │
+└──────────────────────────────────────────────────────────────┘
+
+Look for: 392230304333-lq0uhdkj32h4jaheicpv0s6hnfn7bbu8
+
+┌──────────────────────────────────────────────────────────────┐
+│ STEP 3: Add These Exact URIs                                │
+└──────────────────────────────────────────────────────────────┘
+
+Authorized JavaScript origins:
+  http://localhost:3000
+
+Authorized redirect URIs:
+  http://localhost:3000/api/auth/google/callback
+
+⚠️  IMPORTANT: No trailing slash, exact match!
+
+┌──────────────────────────────────────────────────────────────┐
+│ STEP 4: Save & Wait                                         │
+└──────────────────────────────────────────────────────────────┘
+
+1. Click SAVE button
+2. Wait 5-10 minutes (Google needs time to propagate)
+
+┌──────────────────────────────────────────────────────────────┐
+│ STEP 5: Restart & Test                                      │
+└──────────────────────────────────────────────────────────────┘
+
+Terminal:
+  npm run dev
+
+Browser:
+  http://localhost:3000/signin
+  Click "Continue with Google"
+
+┌──────────────────────────────────────────────────────────────┐
+│ DEBUGGING                                                    │
+└──────────────────────────────────────────────────────────────┘
+
+Check your terminal logs for:
+  [Google OAuth Start] - Shows OAuth initiation
+  [Google OAuth Callback] - Shows callback processing
+  [Google OAuth] Token response status - Shows if token exchange worked
+
+Common errors:
+  • "redirect_uri_mismatch" → URI not added in Google Console
+  • "access_denied" → Email not added as test user
+  • "invalid_client" → Wrong credentials
+
+┌──────────────────────────────────────────────────────────────┐
+│ VERIFY CONFIGURATION                                         │
+└──────────────────────────────────────────────────────────────┘
+
+Run: node test-google-oauth.js
+
+Should show:
+  ✅ GOOGLE_CLIENT_ID is set correctly
+  ✅ GOOGLE_CLIENT_SECRET is set correctly
+
+┌──────────────────────────────────────────────────────────────┐
+│ STILL NOT WORKING?                                           │
+└──────────────────────────────────────────────────────────────┘
+
+1. Clear browser cookies (or use incognito)
+2. Check browser console (F12 → Console)
+3. Check server terminal logs
+4. Make sure you waited 5-10 minutes after saving in Google Console
+
+Read detailed guides:
+  • FIX_GOOGLE_SIGNIN.md
+  • GOOGLE_OAUTH_SETUP_GUIDE.md
+  • GOOGLE_SIGNIN_FIX_SUMMARY.md
+
+═══════════════════════════════════════════════════════════════
+
+The debug logging I added will show you exactly what's wrong!

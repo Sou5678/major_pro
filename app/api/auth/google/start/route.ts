@@ -17,7 +17,15 @@ export async function GET(request: NextRequest) {
   const appUrl = getBaseUrl(request);
   const nextPath = request.nextUrl.searchParams.get("next") || "/dashboard";
 
+  console.log('[Google OAuth Start]', {
+    clientId: clientId ? `${clientId.substring(0, 20)}...` : 'NOT SET',
+    appUrl,
+    nextPath,
+    redirectUri: `${appUrl}/api/auth/google/callback`
+  });
+
   if (!clientId) {
+    console.error('[Google OAuth] GOOGLE_CLIENT_ID is not configured');
     return NextResponse.redirect(`${appUrl}/signin?error=google_not_configured`);
   }
 
