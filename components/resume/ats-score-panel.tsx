@@ -2,8 +2,6 @@
 
 import { motion } from "framer-motion";
 import { FileEdit, ShieldCheck, TriangleAlert } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,10 +16,8 @@ interface ATSScorePanelProps {
 }
 
 export function ATSScorePanel({
-  resumeId,
   atsScore,
   passesATS,
-  overallScore,
   onEditResume,
 }: ATSScorePanelProps) {
 

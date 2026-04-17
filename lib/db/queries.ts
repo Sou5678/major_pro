@@ -36,6 +36,7 @@ export interface ResumeDocument {
   status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
   editedContent?: Record<string, string> | null;
   jobTitle?: string | null;
+  jobDescription?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -145,6 +146,7 @@ function normalizeResumeDocument(input: {
   parsedSections?: ParsedResumeDocument["sections"] | null;
   parsedHtml?: string | null;
   jobTitle?: string | null;
+  jobDescription?: string | null;
 }) {
   const now = new Date().toISOString();
   return {
@@ -163,6 +165,7 @@ function normalizeResumeDocument(input: {
     overallScore: null,
     editedContent: null,
     jobTitle: input.jobTitle ?? null,
+    jobDescription: input.jobDescription ?? null,
     createdAt: now,
     updatedAt: now,
   } satisfies ResumeDocument;
@@ -573,6 +576,7 @@ export async function createResumeRecord(data: {
   parsedSections?: ParsedResumeDocument["sections"] | null;
   parsedHtml?: string | null;
   jobTitle?: string | null;
+  jobDescription?: string | null;
 }) {
   const document = normalizeResumeDocument(data);
 

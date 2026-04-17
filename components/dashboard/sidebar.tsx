@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { BarChart3, FileUp, Home, LogOut, UserCircle2, FilePlus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 
@@ -24,7 +23,6 @@ const navItems: Array<{ href: Route; label: string; icon: typeof Home }> = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { user, setUser } = useAuth();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [mounted, setMounted] = useState(false);

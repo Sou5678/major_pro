@@ -22,6 +22,23 @@ function getGroqModel() {
   return process.env.GROQ_MODEL ?? "llama-3.1-8b-instant";
 }
 
+export async function generateGroqCompletion(prompt: string): Promise<string> {
+  const groq = getGroqClient();
+  const completion = await groq.chat.completions.create({
+    model: getGroqModel(),
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.4,
+    max_tokens: 3200,
+  });
+
+  const content = completion.choices[0]?.message?.content;
+  if (!content) {
+    throw new Error("GROQ_EMPTY_RESPONSE");
+  }
+
+  return content;
+}
+
 export async function analyzeResumeStream(resumeText: string, jobTitle?: string): Promise<ReadableStream<Uint8Array>> {
   const groq = getGroqClient();
   const stream = await groq.chat.completions.create({

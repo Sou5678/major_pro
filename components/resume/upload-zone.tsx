@@ -41,6 +41,7 @@ export function UploadZone({ onUploaded }: UploadZoneProps) {
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [jobTitle, setJobTitle] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -81,6 +82,7 @@ export function UploadZone({ onUploaded }: UploadZoneProps) {
           fileBase64,
           fileSize: nextFile.size,
           jobTitle,
+          jobDescription,
         });
 
         request.open("POST", "/api/resume/upload");
@@ -145,6 +147,30 @@ export function UploadZone({ onUploaded }: UploadZoneProps) {
           placeholder="Senior Product Manager"
           className="text-sm sm:text-base"
         />
+      </div>
+      
+      <div className="space-y-2">
+        <label className="text-xs sm:text-sm font-medium text-text-secondary">
+          📋 Paste Full Job Description (optional)
+        </label>
+        <textarea
+          value={jobDescription}
+          onChange={(e) => setJobDescription(e.target.value)}
+          placeholder="Paste the complete job description here for deep AI analysis...
+
+Example:
+- Required skills and qualifications
+- Responsibilities and duties  
+- Company culture and values
+- Preferred experience
+
+The AI will analyze gaps between your resume and JD requirements."
+          className="w-full h-40 px-4 py-3 rounded-xl border border-border bg-surface text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent resize-y"
+        />
+        <p className="text-xs text-text-tertiary flex items-center gap-1.5">
+          <span className="text-accent">💡</span>
+          <span>Paste full JD for better skill gap analysis, keyword matching, and tailored suggestions</span>
+        </p>
       </div>
       <Card
         className={cn(

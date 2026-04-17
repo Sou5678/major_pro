@@ -1,0 +1,16 @@
+
+> resumeiq@1.0.0 start
+> next start -p 3005
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.1.18:3005
+
+ ✓ Starting...
+ ✓ Ready in 1478ms
+[Auth] requireApiUser - Cookie present: false
+[Session] Checking session...
+[Session] Cookies: []
+[Auth] requireApiUser - Cookie present: false
+[Session] User found: false undefined
+[Auth] requireApiUser - Cookie present: false

@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       fileBase64?: string;
       fileSize?: number;
       jobTitle?: string;
+      jobDescription?: string;
       latexCode?: string;
     };
 
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
     const fileBase64 = body.fileBase64?.trim();
     const latexCode = body.latexCode?.trim();
     const jobTitle = body.jobTitle?.trim() ?? "";
+    const jobDescription = body.jobDescription?.trim() ?? "";
     const declaredSize = body.fileSize ?? 0;
 
     if (!fileName || !extension) {
@@ -139,6 +141,7 @@ export async function POST(request: NextRequest) {
         parsedSections: parsed.sections,
         parsedHtml: parsed.html ?? null,
         jobTitle: jobTitle || null,
+        jobDescription: jobDescription || null,
       });
       console.log('[Upload] Resume created successfully:', resume.id);
     } catch (dbError) {

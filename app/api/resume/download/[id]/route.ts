@@ -1,10 +1,10 @@
-import { Document, Packer, Paragraph, TextRun } from "docx";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { NextResponse } from "next/server";
 
 import { requireApiUser } from "@/lib/auth";
 import { getResumeById } from "@/lib/db/queries";
 import { apiError } from "@/lib/utils";
+import { generateResumeBuffer, type ResumeTemplate } from "@/lib/resume-templates";
 
 function buildResumeText(parsedText: string, editedContent: Record<string, string> | null | undefined) {
   const editedText = editedContent ? Object.values(editedContent).join("\n\n") : "";
@@ -20,17 +20,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   const { id } = await params;
   const url = new URL(request.url);
   const requestedFormat = (url.searchParams.get("format") ?? "pdf").toLowerCase();
+  const template = (url.searchParams.get("template") ?? "modern") as ResumeTemplate;
 
   const resume = await getResumeById(id, user.id);
 
   if (!resume) {
     return NextResponse.json(apiError("Resume not found.", "NOT_FOUND"), { status: 404 });
-  }
-
-  if (requestedFormat === "docx" && user.plan === "FREE") {
-    return NextResponse.json(apiError("DOCX downloads are available on Pro.", "PLAN_RESTRICTED"), {
-      status: 403,
-    });
   }
 
   const fullText = buildResumeText(
@@ -39,26 +34,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   );
 
   if (requestedFormat === "docx") {
-    const doc = new Document({
-      sections: [
-        {
-          properties: {},
-          children: fullText.split("\n").map((line) =>
-            new Paragraph({
-              children: [new TextRun({ text: line || " ", font: "Calibri", size: 22 })],
-            }),
-          ),
-        },
-      ],
-    });
+    // Use template-based generation
+    const buffer = await generateResumeBuffer(fullText, template);
 
-    const buffer = await Packer.toBuffer(doc);
-    const bytes = Uint8Array.from(buffer);
-    return new Response(bytes, {
+    return new Response(Uint8Array.from(buffer), {
       headers: {
-        "Content-Type":
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "Content-Disposition": `attachment; filename="${resume.fileName.replace(/\.[^.]+$/, "")}.docx"`,
+        "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "Content-Disposition": `attachment; filename="resume-${template}.docx"`,
       },
     });
   }
@@ -95,9 +77,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   }
 
   const buffer = await pdf.save();
-  const bytes = Uint8Array.from(buffer);
-
-  return new Response(bytes, {
+  return new Response(Uint8Array.from(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${resume.fileName.replace(/\.[^.]+$/, "")}.pdf"`,

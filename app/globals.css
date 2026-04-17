@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 :root {
+  --font-syne: "Segoe UI", "Trebuchet MS", sans-serif;
+  --font-dm-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-jetbrains-mono: "Cascadia Code", "Consolas", "SFMono-Regular", monospace;
   --background: #0a0a0f;
   --surface: #111118;
   --surface-elevated: #1a1a24;

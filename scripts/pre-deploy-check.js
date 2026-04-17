@@ -13,6 +13,25 @@ console.log('🔍 Running pre-deployment checks...\n');
 let hasErrors = false;
 let hasWarnings = false;
 
+function hasAnyAppPage(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    return false;
+  }
+
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  for (const entry of entries) {
+    const entryPath = path.join(dirPath, entry.name);
+    if (entry.isFile() && entry.name === 'page.tsx') {
+      return true;
+    }
+    if (entry.isDirectory() && hasAnyAppPage(entryPath)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // Check 1: package.json exists
 console.log('✓ Checking package.json...');
 if (!fs.existsSync('package.json')) {
@@ -97,8 +116,8 @@ if (!fs.existsSync('app')) {
     console.error('❌ app/layout.tsx not found!');
     hasErrors = true;
   }
-  if (!fs.existsSync('app/page.tsx')) {
-    console.error('❌ app/page.tsx not found!');
+  if (!hasAnyAppPage('app')) {
+    console.error('❌ No app page.tsx file found, including inside route groups!');
     hasErrors = true;
   }
 }

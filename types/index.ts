@@ -1,6 +1,7 @@
 export type Plan = "FREE" | "PRO" | "ENTERPRISE";
 export type AnalysisStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
 export type GapSeverity = "critical" | "high" | "medium" | "low";
+export type ResumeTemplate = "modern" | "elegant" | "harvard" | "minimal" | "creative";
 
 export interface ResumeSectionMap {
   contact?: string;
@@ -19,6 +20,17 @@ export interface ParsedResumeDocument {
   rawText: string;
   sections: ResumeSectionMap;
   html?: string;
+}
+
+export interface JobDescriptionAnalysis {
+  requiredSkills: string[];
+  preferredSkills: string[];
+  requiredExperience: string[];
+  missingSkills: string[];
+  matchPercentage: number;
+  keyResponsibilities: string[];
+  companyValues: string[];
+  recommendations: string[];
 }
 
 export interface ResumeAnalysis {
@@ -98,6 +110,55 @@ export interface ResumeAnalysis {
   topPriorities: string[];
   tailoredFor?: string;
   analysisVersion: string;
+  jobDescriptionAnalysis?: JobDescriptionAnalysis;
+}
+
+export interface CoverLetter {
+  id: string;
+  resumeId: string;
+  userId: string;
+  jobTitle: string;
+  companyName: string;
+  content: string;
+  tone: "professional" | "enthusiastic" | "formal" | "creative";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InterviewQuestion {
+  question: string;
+  category: "technical" | "behavioral" | "situational" | "experience";
+  difficulty: "easy" | "medium" | "hard";
+  tips: string;
+  sampleAnswer?: string;
+}
+
+export interface InterviewPrep {
+  questions: InterviewQuestion[];
+  overallTips: string[];
+  focusAreas: string[];
+  generatedAt: string;
+}
+
+export interface ResumeVersion {
+  id: string;
+  resumeId: string;
+  versionName: string;
+  targetRole: string;
+  description: string;
+  modifiedSections: Record<string, string>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface JobRoleRecommendation {
+  role: string;
+  matchPercentage: number;
+  reasoning: string;
+  requiredSkills: string[];
+  missingSkills: string[];
+  salaryRange?: string;
+  growthPotential: "high" | "medium" | "low";
 }
 
 export interface ResumeRecord {
@@ -113,6 +174,7 @@ export interface ResumeRecord {
   overallScore: number | null;
   status: AnalysisStatus;
   jobTitle: string | null;
+  jobDescription?: string | null;
   createdAt: string | Date;
   updatedAt: string | Date;
   analysisResult?: ResumeAnalysis | null;

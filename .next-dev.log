@@ -1,0 +1,37 @@
+
+> resumeiq@1.0.0 dev
+> next dev --port 3006
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3006
+   - Network:      http://192.168.1.18:3006
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+ ✓ Starting...
+ ✓ Ready in 4.2s
+ ○ Compiling /resume/[id] ...
+ ✓ Compiled /resume/[id] in 7.1s (2031 modules)
+[AuthGuard] Showing loading screen
+[AuthGuard] Showing loading screen
+ GET /dashboard 200 in 9131ms
+ GET /profile 200 in 9146ms
+[Auth] requireApiUser - Cookie present: false
+ GET /api/resume/test-id 401 in 9874ms
+[AuthGuard] Showing loading screen
+ GET /resume/test-id 200 in 10770ms
+ ○ Compiling /api/resume/upload ...
+ ✓ Compiled /api/resume/upload in 5.1s (2484 modules)
+ POST /api/auth/signin 400 in 5439ms
+[Auth] requireApiUser - Cookie present: false
+[Upload] Actor: { id: 'd69b88bb-f444-48b0-af15-dbcefb105152', authenticated: false }
+ POST /api/resume/upload 400 in 5942ms
+ POST /api/resume/role-recommendations 401 in 6056ms
+ POST /api/auth/signup 400 in 6070ms
+ POST /api/auth/signin 400 in 147ms
+[Auth] requireApiUser - Cookie present: false
+[Upload] Actor: { id: '6a535394-4ddb-4de8-b446-9ac07d02d06b', authenticated: false }
+ POST /api/resume/upload 400 in 180ms
+ POST /api/resume/role-recommendations 401 in 194ms
+ POST /api/auth/signup 400 in 210ms

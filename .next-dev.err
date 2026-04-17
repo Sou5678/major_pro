@@ -1,0 +1,2 @@
+[MongoDB] Operation failed, falling back to file storage: MONGODB_URI is not configured.
+[MongoDB] Operation failed, falling back to file storage: MongoDB connection unavailable - using fallback storage
